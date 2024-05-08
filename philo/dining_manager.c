@@ -1,13 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philosophers.h                                     :+:      :+:    :+:   */
+/*   dining_manager.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/22 16:49:09 by wiferrei          #+#    #+#             */
-/*   Updated: 2023/12/22 16:56:44 by wiferrei         ###   ########.fr       */
+/*   Created: 2024/05/08 14:41:11 by wiferrei          #+#    #+#             */
+/*   Updated: 2024/05/08 14:43:34 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/philosophers.h"
+#include "philo.h"
+
+void	wait_for_all_philos(t_table *table)
+{
+	while (!get_bool(&table->table_mutex, &table->end_flag))
+		;
+}

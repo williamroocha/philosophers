@@ -1,18 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philosophers.h                                     :+:      :+:    :+:   */
+/*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/22 16:48:00 by wiferrei          #+#    #+#             */
-/*   Updated: 2023/12/22 17:00:10 by wiferrei         ###   ########.fr       */
+/*   Created: 2024/05/08 09:24:31 by wiferrei          #+#    #+#             */
+/*   Updated: 2024/05/08 14:10:01 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILOSOPHERS_H
-# define PHILOSOPHERS_H
+#include "philo.h"
 
-# include <pthread.h>
+int	main(int ac, char **av)
+{
+	t_table	table;
 
-# endif
+	if (ac == 5 || ac == 6)
+	{
+		parse_args(&table, av);
+		data_init(&table);
+	}
+	else
+	{
+		philo_error_exit("Invalid number of arguments");
+	}
+	return (0);
+}
