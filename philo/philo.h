@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 08:54:49 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/08 15:25:23 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/13 10:35:11 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,12 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-typedef struct s_table	t_table;
-typedef pthread_mutex_t	t_mtx;
-
 # ifndef DEBUG_MODE
 #  define DEBUG_MODE 0
 # endif
+
+typedef struct s_table	t_table;
+typedef pthread_mutex_t	t_mtx;
 
 typedef enum e_opcode
 {
@@ -66,6 +66,8 @@ typedef struct s_fork
 	int					id;
 }						t_fork;
 
+typedef struct s_table	t_table;
+
 typedef struct s_philo
 {
 	int					id;
@@ -79,7 +81,7 @@ typedef struct s_philo
 	t_table				*table;
 }						t_philo;
 
-typedef struct s_table
+struct					s_table
 {
 	long				philo_nbr;
 	long				time_to_die;
@@ -89,11 +91,13 @@ typedef struct s_table
 	long				start_time;
 	bool				end_flag;
 	bool				all_philos_ready;
-	t_mtx				table_mutex;
-	t_mtx				write_mutex;
+	long				threads_running_nbr;
+	pthread_t			monitor;
 	t_fork				*forks;
 	t_philo				*philos;
-}						t_table;
+	t_mtx				table_mutex;
+	t_mtx				write_mutex;
+};
 
 /*********************************************************/
 # define RST "\033[0m" /* Reset to default color */
@@ -106,30 +110,37 @@ typedef struct s_table
 # define W "\033[1;37m" /* Bold White */
 /*********************************************************/
 
-void					parse_args(t_table *table, char **av);
-void					data_init(t_table *table);
-void					*my_malloc(size_t bytes);
-static void				handle_thread_error(int status, t_opcode opcode);
-void					mutex_handler(t_mtx *mtx, t_opcode opcode);
-static void				handle_thread_error(int status, t_opcode opcode);
-void					thread_handler(pthread_t *thread, void *(*foo)(void *),
-							void *data, t_opcode opcode);
+// Dinner
 
 // Dining manager
-void					wait_for_all_philos(t_table *table);
 
 // Getters and setters
-void					set_bool(t_mtx *mutex, bool *dest, bool value);
-bool					get_bool(t_mtx *mutex, bool *value);
-long					get_long(t_mtx *mutex, long *value);
-void					set_long(t_mtx *mutex, long *dest, long value);
-bool					dinner_finished(t_table *table);
 
 // Dinner utils
-void					philo_error_exit(const char *msg);
-long					get_time(t_time_code time_code);
+
+// General utils
+void					ft_malloc(size_t bytes);
+void					error_exit(const char *error);
+static void				handle_mutex_error(int status, t_opcode opcode);
+static void				handle_thread_error(int status, t_opcode opcode);
+void					ft_mutex_handle(t_mtx *mutex, t_opcode opcode);
+void					ft_thread_handle(pthread_t *thread,
+							void *(*foo)(void *), void *data, t_opcode opcode);
+long					gettime(int time_code);
 void					precise_usleep(long usec, t_table *table);
+void					clean(t_table *table);
 void					write_status(t_philo_status status, t_philo *philo,
 							bool debug);
+static void				assign_forks(t_philo *philo, t_fork *forks,
+							int philo_position);
+static void				philo_init(t_table *table);
+void					data_init(t_table *table);
+
+// Parsing
+void					parse_input(t_table *table, char **av);
+static long				ft_atol(const char *str);
+static const char		*valid_input(const char *str);
+static inline bool		is_space(char c);
+static inline bool		is_digit(char c);
 
 #endif

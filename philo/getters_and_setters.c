@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 14:25:10 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/08 14:29:46 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/09 16:56:43 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,18 @@
 
 void	set_bool(t_mtx *mutex, bool *dest, bool value)
 {
-	safe_mutex_handle(mutex, LOCK);
+	mutex_handler(mutex, LOCK);
 	*dest = value;
-	safe_mutex_handle(mutex, UNLOCK);
+	mutex_handler(mutex, UNLOCK);
 }
 
 bool	get_bool(t_mtx *mutex, bool *value)
 {
 	bool	ret;
 
-	safe_mutex_handle(mutex, LOCK);
+	mutex_handler(mutex, LOCK);
 	ret = *value;
-	safe_mutex_handle(mutex, UNLOCK);
+	mutex_handler(mutex, UNLOCK);
 	return (ret);
 }
 
@@ -33,17 +33,17 @@ long	get_long(t_mtx *mutex, long *value)
 {
 	long	ret;
 
-	safe_mutex_handle(mutex, LOCK);
+	mutex_handler(mutex, LOCK);
 	ret = *value;
-	safe_mutex_handle(mutex, UNLOCK);
+	mutex_handler(mutex, UNLOCK);
 	return (ret);
 }
 
 void	set_long(t_mtx *mutex, long *dest, long value)
 {
-	safe_mutex_handle(mutex, LOCK);
+	mutex_handler(mutex, LOCK);
 	*dest = value;
-	safe_mutex_handle(mutex, UNLOCK);
+	mutex_handler(mutex, UNLOCK);
 }
 
 bool	dinner_finished(t_table *table)

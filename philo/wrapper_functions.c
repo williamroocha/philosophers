@@ -6,75 +6,78 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 10:05:04 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/08 10:51:20 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/13 10:01:14 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	*my_malloc(size_t bytes)
+void	ft_malloc(size_t bytes)
 {
 	void	*ptr;
 
 	ptr = malloc(bytes);
 	if (!ptr)
-		philo_error_exit("Malloc failed");
+		error_exit("Malloc failed");
 	return (ptr);
 }
 
+static void	handle_mutex_error(int status, t_opcode opcode)
+{
+	if (status == 0)
+		return ;
+	if (status == EINVAL && (opcode == LOCK || opcode == UNLOCK))
+		error_exit("The value specified by mutex is invalid");
+	else if (status == EINVAL && opcode == INIT)
+		error_exit("The value specified by attr is invalid.");
+	else if (status == EDEADLK)
+		error_exit("A deadlock would occur if the thread "
+			"blocked waiting for mutex.");
+	else if (status == EPERM)
+		error_exit("The current thread does not hold a lock on mutex.");
+	else if (status == ENOMEM)
+		error_exit("The process cannot allocate enough memory"
+			" to create another mutex.");
+	else if (status == EBUSY)
+		error_exit("Mutex is locked");
+}
+
 static void	handle_thread_error(int status, t_opcode opcode)
 {
 	if (status == 0)
 		return ;
 	if (status == EAGAIN)
-		philo_error_exit("No resources to create another thread");
+		error_exit("No resources to create another thread");
 	else if (status == EPERM)
-		philo_error_exit("No permission to set the scheduling policy and parameters specified in attr");
-	else if (status == EINVAL && opcode == CREATE)
-		philo_error_exit("The value specified by attr is invalid.");
-	else if (status == EINVAL && (opcode == JOIN || opcode == DETACH))
-		philo_error_exit("The value specified by thread is not joinable\n");
+		error_exit("The caller does not have appropriate permission\n");
+	else if (opcode == CREATE && status == EINVAL)
+		error_exit("The value specified by attr is invalid.");
+	else if ((opcode == JOIN || opcode == DETACH) && status == EINVAL)
+		error_exit("The value specified by thread is not joinable\n");
 	else if (status == ESRCH)
-		philo_error_exit("No thread could be found corresponding to that specified by the given thread ID");
+		error_exit("No thread could be found corresponding to that"
+			"specified by the given thread ID, thread.");
 	else if (status == EDEADLK)
-		philo_error_exit("A deadlock was detected or the value of thread specifies the calling thread");
-	else
-		philo_error_exit("Thread error");
+		error_exit("A deadlock was detected or the value of"
+			"thread specifies the calling thread.");
 }
 
-void	mutex_handler(t_mtx *mtx, t_opcode opcode)
+void	ft_mutex_handle(t_mtx *mutex, t_opcode opcode)
 {
 	if (opcode == LOCK)
-		handle_mutex_error(pthread_mutex_lock(mtx), opcode);
+		handle_mutex_error(pthread_mutex_lock(mutex), opcode);
 	else if (opcode == UNLOCK)
-		handle_mutex_error(pthread_mutex_unlock(mtx), opcode);
+		handle_mutex_error(pthread_mutex_unlock(mutex), opcode);
 	else if (opcode == INIT)
-		handle_mutex_error(pthread_mutex_init(mtx, NULL), opcode);
+		handle_mutex_error(pthread_mutex_init(mutex, NULL), opcode);
 	else if (opcode == DESTROY)
-		handle_mutex_error(pthread_mutex_destroy(mtx), opcode);
+		handle_mutex_error(pthread_mutex_destroy(mutex), opcode);
+	else
+		error_exit("Wrong opcode for mutex_handle:"
+			"use <LOCK> <UNLOCK> <INIT> <DESTROY>");
 }
 
-static void	handle_thread_error(int status, t_opcode opcode)
-{
-	if (status == 0)
-		return ;
-	if (status == EAGAIN)
-		philo_error_exit("No resources to create another thread");
-	else if (status == EPERM)
-		philo_error_exit("The caller does not have appropriate permission\n");
-	else if (status == EINVAL && opcode == CREATE)
-		philo_error_exit("The value specified by attr is invalid.");
-	else if (status == EINVAL && (opcode == JOIN || opcode == DETACH))
-		philo_error_exit("The value specified by thread is not joinable\n");
-	else if (status == ESRCH)
-		philo_error_exit("No thread could be found corresponding to that"
-							"specified by the given thread ID, thread.");
-	else if (status == EDEADLK)
-		philo_error_exit("A deadlock was detected or the value of"
-							"thread specifies the calling thread.");
-}
-
-void	thread_handler(pthread_t *thread, void *(*foo)(void *), void *data,
+void	ft_thread_handle(pthread_t *thread, void *(*foo)(void *), void *data,
 		t_opcode opcode)
 {
 	if (opcode == CREATE)
@@ -84,5 +87,6 @@ void	thread_handler(pthread_t *thread, void *(*foo)(void *), void *data,
 	else if (opcode == DETACH)
 		handle_thread_error(pthread_detach(*thread), opcode);
 	else
-		philo_error_exit("Wrong opcode");
+		error_exit("Wrong opcode for thread_handle:"
+			" use <CREATE> <JOIN> <DETACH>");
 }

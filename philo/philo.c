@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 09:24:31 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/08 14:10:01 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/09 17:21:33 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int	main(int ac, char **av)
 	{
 		parse_args(&table, av);
 		data_init(&table);
+		start_dinner(&table);
 	}
 	else
 	{
