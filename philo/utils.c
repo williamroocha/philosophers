@@ -5,120 +5,141 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/08 09:26:33 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/13 14:07:51 by wiferrei         ###   ########.fr       */
+/*   Created: 2024/05/14 15:24:20 by wiferrei          #+#    #+#             */
+/*   Updated: 2024/05/14 18:40:00 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	error_exit(const char *error)
+long	ft_atoi(char *str)
 {
-	printf(RED "%s\n" RST, error);
-	exit(EXIT_FAILURE);
-}
+	long	i;
+	long	res;
+	int		sign;
 
-long	gettime(int time_code)
-{
-	struct timeval	tv;
-
-	if (0 != gettimeofday(&tv, NULL))
-		error_exit("Gettimeofday failed");
-	if (MILLISECOND == time_code)
-		return (tv.tv_sec * 1e3 + tv.tv_usec / 1e3);
-	else if (MICROSECOND == time_code)
-		return (tv.tv_sec * 1e6 + tv.tv_usec);
-	else if (SECONDS == time_code)
-		return (tv.tv_sec + tv.tv_usec / 1e6);
-	else
-		error_exit("Wrong input to gettime:"
-					"use <MILLISECOND> <MICROSECOND> <SECONDS>");
-	return (1337);
-}
-
-void	precise_usleep(long usec, t_table *table)
-{
-	long	start;
-	long	elapsed;
-	long	rem;
-
-	start = gettime(MICROSECOND);
-	while (usec > gettime(MICROSECOND) - start)
+	res = 0;
+	i = 0;
+	sign = 1;
+	while (str[i] == ' ' || (str[i] >= '\t' && str[i] <= '\r'))
+		i++;
+	if (str[i] == '-')
+		sign = -1;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	while (str[i] >= '0' && str[i] <= '9')
 	{
-		if (dinner_finished(table))
-			break ;
-		elapsed = gettime(MICROSECOND) - start;
-		rem = usec - elapsed;
-		if (1e4 < rem)
-			usleep(rem / 2);
-		else
-			while (usec > gettime(MICROSECOND) - start)
-				;
+		res = res * 10 + str[i] - '0';
+		i++;
 	}
+	return (sign * res);
 }
 
-void	clean(t_table *table)
+size_t	get_time(void)
 {
-	t_philo	*philo;
-	int		i;
+	struct timeval	time;
+
+	if (gettimeofday(&time, NULL))
+		return (0);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
+
+void	destroy_all(t_geral *geral)
+{
+	int	i;
 
 	i = -1;
-	while (++i < table->philo_nbr)
+	while (++i < geral->nbr_of_philos)
+		pthread_join(geral->philos[i].thread, 0);
+	i = -1;
+	while (++i < geral->nbr_of_philos)
+		pthread_mutex_destroy(&geral->forks[i]);
+	pthread_mutex_destroy(&geral->w8);
+	pthread_mutex_destroy(&geral->write);
+	pthread_mutex_destroy(&geral->eating);
+	free(geral->forks);
+	free(geral->philos);
+}
+
+void	ft_usleep(size_t time)
+{
+	size_t	st;
+
+	st = get_time();
+	while ((get_time() - st) < time)
 	{
-		philo = table->philos + i;
-		ft_mutex_handle(&philo->philo_mutex, DESTROY);
+		usleep(time / 10);
 	}
-	ft_mutex_handle(&table->write_mutex, DESTROY);
-	ft_mutex_handle(&table->table_mutex, DESTROY);
-	free(table->forks);
-	free(table->philos);
 }
 
-static void	write_status_debug(t_philo_status status, t_philo *philo,
-		long elapsed)
+void	print_message(char *str, t_philo *philo)
 {
-	if (TAKE_FIRST_FORK == status && !dinner_finished(philo->table))
-		printf(W"%6ld"RST" %d has taken the 1° fork 🍽"
-			"\t\t\tn°"B"[🍴 %d 🍴]\n"RST, elapsed, philo->id,
-			philo->first_fork->id);
-	else if (TAKE_SECOND_FORK == status && !dinner_finished(philo->table))
-		printf(W"%6ld"RST" %d has taken the 2° fork 🍽"
-			"\t\t\tn°"B"[🍴 %d 🍴]\n"RST, elapsed, philo->id,
-			philo->second_fork->id);
-	else if (EATING == status && !dinner_finished(philo->table))
-		printf(W"%6ld"C" %d is eating 🍝"
-			"\t\t\t"Y"[🍝 %ld 🍝]\n"RST, elapsed, philo->id, philo->meals_count);
-	else if (SLEEPING == status && !dinner_finished(philo->table))
-		printf(W"%6ld"RST" %d is sleeping 😴\n", elapsed, philo->id);
-	else if (THINKING == status && !dinner_finished(philo->table))
-		printf(W"%6ld"RST" %d is thinking 🤔\n", elapsed, philo->id);
-	else if (DIED == status)
-		printf(RED"\t\t💀💀💀 %6ld %d died   💀💀💀\n"RST, elapsed, philo->id);
-}
+	size_t	time;
 
-void	write_status(t_philo_status status, t_philo *philo, bool debug)
-{
-	long	elapsed;
-
-	elapsed = gettime(MILLISECOND) - philo->table->start_time;
-	if (get_bool(&philo->philo_mutex, &philo->full))
+	if (!check_flag(philo->geral))
 		return ;
-	ft_mutex_handle(&philo->table->write_mutex, LOCK);
-	if (debug)
-		write_status_debug(status, philo, elapsed);
-	else
+	pthread_mutex_lock(&philo->geral->write);
+	time = get_time();
+	printf("%zu %d %s\n", time - philo->geral->start_time, philo->id, str);
+	pthread_mutex_unlock(&philo->geral->write);
+}
+
+int	check_flag(t_geral *geral)
+{
+	int	i;
+
+	i = 1;
+	pthread_mutex_lock(&geral->eating);
+	if (geral->flag == 0)
+		i = 0;
+	pthread_mutex_unlock(&geral->eating);
+	return (i);
+}
+
+static void	check_eatean(t_geral *geral)
+{
+	int	i;
+
+	i = 0;
+	pthread_mutex_lock(&geral->w8);
+	while (geral->nbr_of_meals && i < geral->nbr_of_philos
+		&& geral->philos[i].meals_eaten >= geral->nbr_of_meals)
+		i++;
+	pthread_mutex_lock(&geral->eating);
+	if (i >= geral->nbr_of_philos)
+		geral->flag = 0;
+	pthread_mutex_unlock(&geral->eating);
+	pthread_mutex_unlock(&geral->w8);
+}
+
+static void	check_time_to_die(t_geral *geral)
+{
+	int		i;
+	size_t	time;
+
+	i = -1;
+	while (++i < geral->nbr_of_philos && check_flag(geral))
 	{
-		if ((status == TAKE_FIRST_FORK || status == TAKE_SECOND_FORK)
-			&& !dinner_finished(philo->table))
-			printf(W "%-6ld" RST " %d has taken a fork\n", elapsed, philo->id);
-		else if (status == EATING && !dinner_finished(philo->table))
-			printf(W "%-6ld" C " %d is eating\n" RST, elapsed, philo->id);
-		else if (status == SLEEPING && !dinner_finished(philo->table))
-			printf(W "%-6ld" RST " %d is sleeping\n", elapsed, philo->id);
-		else if (status == THINKING && !dinner_finished(philo->table))
-			printf(W "%-6ld" RST " %d is thinking\n", elapsed, philo->id);
-		else if (status == DIED)
-			printf(RED "%-6ld %d died\n" RST, elapsed, philo->id);
+		pthread_mutex_lock(&geral->w8);
+		time = get_time();
+		if ((time - geral->philos[i].last_meal) >= geral->time_to_die)
+		{
+			print_message("died", &geral->philos[i]);
+			pthread_mutex_lock(&geral->eating);
+			geral->flag = 0;
+			pthread_mutex_unlock(&geral->eating);
+		}
+		pthread_mutex_unlock(&geral->w8);
 	}
-	ft_mutex_handle(&philo->table->write_mutex, UNLOCK);
+}
+
+void	check_dead(t_geral *geral)
+{
+	while (check_flag(geral))
+	{
+		check_eatean(geral);
+		if (!check_flag(geral))
+			break ;
+		check_time_to_die(geral);
+	}
 }
