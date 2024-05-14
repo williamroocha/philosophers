@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 08:54:49 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/13 10:35:11 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/14 09:33:58 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,15 +111,28 @@ struct					s_table
 /*********************************************************/
 
 // Dinner
+void					dinner_start(t_table *table);
+static void				*dinner_routine(void *data);
+static void				eat(t_philo *philo);
+void					thinking(t_philo *philo, bool pre_simulation);
+void					*lone_philo(void *arg);
 
 // Dining manager
+void					wait_for_all_philos(t_table *table);
+void					increase_long(t_mtx *mutex, long *value);
+
+// Health check
+void					*health_monitor(void *data);
+static bool				philo_died(t_philo *philo);
+bool					all_philos_running(t_mtx *mutex, long *threads,
+							long philo_nbr);
 
 // Getters and setters
 
 // Dinner utils
 
 // General utils
-void					ft_malloc(size_t bytes);
+void					*ft_malloc(size_t bytes);
 void					error_exit(const char *error);
 static void				handle_mutex_error(int status, t_opcode opcode);
 static void				handle_thread_error(int status, t_opcode opcode);
@@ -135,12 +148,15 @@ static void				assign_forks(t_philo *philo, t_fork *forks,
 							int philo_position);
 static void				philo_init(t_table *table);
 void					data_init(t_table *table);
+void					set_bool(t_mtx *mutex, bool *dest, bool value);
+bool					get_bool(t_mtx *mutex, bool *value);
+long					get_long(t_mtx *mutex, long *value);
+void					set_long(t_mtx *mutex, long *dest, long value);
+bool					dinner_finished(t_table *table);
 
 // Parsing
 void					parse_input(t_table *table, char **av);
 static long				ft_atol(const char *str);
 static const char		*valid_input(const char *str);
-static inline bool		is_space(char c);
-static inline bool		is_digit(char c);
 
 #endif

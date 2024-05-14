@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 09:37:12 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/13 10:33:26 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/13 14:00:15 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ static const char	*valid_input(const char *str)
 	if (*str == '+')
 		++str;
 	else if (*str == '-')
-		philo_error_exit("Feed me only positive values");
+		error_exit("Feed me only positive values");
 	if (!is_digit(*str))
-		philo_error_exit("The input is not a correct digit");
+		error_exit("The input is not a correct digit");
 	number = str;
 	while (is_digit(*str++))
 		++len;
 	if (len > 10)
-		philo_error_exit("The value is too big, INT_MAX is the limit");
+		error_exit("The value is too big, INT_MAX is the limit");
 	return (number);
 }
 
@@ -53,7 +53,7 @@ static long	ft_atol(const char *str)
 	while (is_digit(*str))
 		num = (num * 10) + (*str++ - '0');
 	if (num > INT_MAX)
-		philo_error_exit("INT_MAX is the limit, not the sky");
+		error_exit("INT_MAX is the limit, not the sky");
 	return (num);
 }
 

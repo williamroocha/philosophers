@@ -6,13 +6,13 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 10:05:04 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/13 10:01:14 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/13 14:08:26 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_malloc(size_t bytes)
+void	*ft_malloc(size_t bytes)
 {
 	void	*ptr;
 

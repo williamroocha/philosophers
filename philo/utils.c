@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 09:26:33 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/13 10:12:37 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/13 14:07:51 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	precise_usleep(long usec, t_table *table)
 	start = gettime(MICROSECOND);
 	while (usec > gettime(MICROSECOND) - start)
 	{
-		if (simulation_finished(table))
+		if (dinner_finished(table))
 			break ;
 		elapsed = gettime(MICROSECOND) - start;
 		rem = usec - elapsed;
@@ -66,10 +66,10 @@ void	clean(t_table *table)
 	while (++i < table->philo_nbr)
 	{
 		philo = table->philos + i;
-		safe_mutex_handle(&philo->philo_mutex, DESTROY);
+		ft_mutex_handle(&philo->philo_mutex, DESTROY);
 	}
-	safe_mutex_handle(&table->write_mutex, DESTROY);
-	safe_mutex_handle(&table->table_mutex, DESTROY);
+	ft_mutex_handle(&table->write_mutex, DESTROY);
+	ft_mutex_handle(&table->table_mutex, DESTROY);
 	free(table->forks);
 	free(table->philos);
 }
@@ -100,10 +100,10 @@ void	write_status(t_philo_status status, t_philo *philo, bool debug)
 {
 	long	elapsed;
 
-	elapsed = get_time(MILLISECOND) - philo->table->start_time;
+	elapsed = gettime(MILLISECOND) - philo->table->start_time;
 	if (get_bool(&philo->philo_mutex, &philo->full))
 		return ;
-	mutex_handler(&philo->table->write_mutex, LOCK);
+	ft_mutex_handle(&philo->table->write_mutex, LOCK);
 	if (debug)
 		write_status_debug(status, philo, elapsed);
 	else
@@ -120,5 +120,5 @@ void	write_status(t_philo_status status, t_philo *philo, bool debug)
 		else if (status == DIED)
 			printf(RED "%-6ld %d died\n" RST, elapsed, philo->id);
 	}
-	mutex_handler(&philo->table->write_mutex, UNLOCK);
+	ft_mutex_handle(&philo->table->write_mutex, UNLOCK);
 }

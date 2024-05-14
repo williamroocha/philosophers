@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/08 10:00:23 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/13 10:25:29 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:57:07 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void	philo_init(t_table *table)
 		philo->id = i + 1;
 		philo->full = false;
 		philo->meals_count = 0;
-		safe_mutex_handle(&philo->philo_mutex, INIT);
+		ft_mutex_handle(&philo->philo_mutex, INIT);
 		philo->table = table;
 		assign_forks(philo, table->forks, i);
 	}
@@ -52,13 +52,13 @@ void	data_init(t_table *table)
 	table->end_flag = false;
 	table->all_philos_ready = false;
 	table->threads_running_nbr = 0;
-	table->philos = safe_malloc(table->philo_nbr * sizeof(t_philo));
-	table->forks = safe_malloc(table->philo_nbr * sizeof(t_fork));
-	safe_mutex_handle(&table->write_mutex, INIT);
-	safe_mutex_handle(&table->table_mutex, INIT);
+	table->philos = ft_malloc(table->philo_nbr * sizeof(t_philo));
+	table->forks = ft_malloc(table->philo_nbr * sizeof(t_fork));
+	ft_mutex_handle(&table->write_mutex, INIT);
+	ft_mutex_handle(&table->table_mutex, INIT);
 	while (++i < table->philo_nbr)
 	{
-		safe_mutex_handle(&table->forks[i].fork, INIT);
+		ft_mutex_handle(&table->forks[i].fork, INIT);
 		table->forks[i].id = i;
 	}
 	philo_init(table);
