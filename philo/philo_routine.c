@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:27:05 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/14 19:02:44 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/14 19:14:38 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 void	lock_left_fork(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->table->forks[philo->left_fork]);
+	pthread_mutex_lock(&philo->table->forks_mutex[philo->left_fork]);
 	print_message("has taken a fork", philo);
 }
 
 void	lock_right_fork(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->table->forks[philo->right_fork]);
+	pthread_mutex_lock(&philo->table->forks_mutex[philo->right_fork]);
 	print_message("has taken a fork", philo);
 }
 
@@ -39,12 +39,12 @@ void	eat(t_philo *philo)
 {
 	lock_right_fork(philo);
 	lock_left_fork(philo);
-	pthread_mutex_lock(&philo->table->w8);
-	print_message("is eating", philo);
+	pthread_mutex_lock(&philo->table->wait_mutex);
+	print_message("is eating_mutex", philo);
 	philo->last_meal_time = get_time();
-	pthread_mutex_unlock(&philo->table->w8);
+	pthread_mutex_unlock(&philo->table->wait_mutex);
 	ft_usleep(philo->table->time_to_eat);
-	pthread_mutex_lock(&philo->table->w8);
+	pthread_mutex_lock(&philo->table->wait_mutex);
 	philo->meals_consumed++;
-	pthread_mutex_unlock(&philo->table->w8);
+	pthread_mutex_unlock(&philo->table->wait_mutex);
 }

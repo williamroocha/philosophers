@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:24:20 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/14 19:02:44 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/14 19:14:38 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,15 +49,15 @@ void	destroy_all(t_table *table)
 	int	i;
 
 	i = -1;
-	while (++i < table->nbr_of_philos)
-		pthread_join(table->philos[i].thread, 0);
+	while (++i < table->philo_nbr)
+		pthread_join(table->philos[i].philo_thread, 0);
 	i = -1;
-	while (++i < table->nbr_of_philos)
-		pthread_mutex_destroy(&table->forks[i]);
-	pthread_mutex_destroy(&table->w8);
-	pthread_mutex_destroy(&table->write);
-	pthread_mutex_destroy(&table->eating);
-	free(table->forks);
+	while (++i < table->philo_nbr)
+		pthread_mutex_destroy(&table->forks_mutex[i]);
+	pthread_mutex_destroy(&table->wait_mutex);
+	pthread_mutex_destroy(&table->write_mutex);
+	pthread_mutex_destroy(&table->eating_mutex);
+	free(table->forks_mutex);
 	free(table->philos);
 }
 
@@ -76,23 +76,23 @@ void	print_message(char *str, t_philo *philo)
 {
 	size_t	time;
 
-	if (!check_flag(philo->table))
+	if (!check_stop_flag(philo->table))
 		return ;
-	pthread_mutex_lock(&philo->table->write);
+	pthread_mutex_lock(&philo->table->write_mutex);
 	time = get_time();
 	printf("%zu %d %s\n", time - philo->table->start_time, philo->id, str);
-	pthread_mutex_unlock(&philo->table->write);
+	pthread_mutex_unlock(&philo->table->write_mutex);
 }
 
-int	check_flag(t_table *table)
+int	check_stop_flag(t_table *table)
 {
 	int	i;
 
 	i = 1;
-	pthread_mutex_lock(&table->eating);
-	if (table->flag == 0)
+	pthread_mutex_lock(&table->eating_mutex);
+	if (table->stop_flag == 0)
 		i = 0;
-	pthread_mutex_unlock(&table->eating);
+	pthread_mutex_unlock(&table->eating_mutex);
 	return (i);
 }
 
@@ -101,15 +101,15 @@ static void	check_eatean(t_table *table)
 	int	i;
 
 	i = 0;
-	pthread_mutex_lock(&table->w8);
-	while (table->nbr_of_meals && i < table->nbr_of_philos
-		&& table->philos[i].meals_consumed >= table->nbr_of_meals)
+	pthread_mutex_lock(&table->wait_mutex);
+	while (table->total_meals && i < table->philo_nbr
+		&& table->philos[i].meals_consumed >= table->total_meals)
 		i++;
-	pthread_mutex_lock(&table->eating);
-	if (i >= table->nbr_of_philos)
-		table->flag = 0;
-	pthread_mutex_unlock(&table->eating);
-	pthread_mutex_unlock(&table->w8);
+	pthread_mutex_lock(&table->eating_mutex);
+	if (i >= table->philo_nbr)
+		table->stop_flag = 0;
+	pthread_mutex_unlock(&table->eating_mutex);
+	pthread_mutex_unlock(&table->wait_mutex);
 }
 
 static void	check_time_to_die(t_table *table)
@@ -118,27 +118,27 @@ static void	check_time_to_die(t_table *table)
 	size_t	time;
 
 	i = -1;
-	while (++i < table->nbr_of_philos && check_flag(table))
+	while (++i < table->philo_nbr && check_stop_flag(table))
 	{
-		pthread_mutex_lock(&table->w8);
+		pthread_mutex_lock(&table->wait_mutex);
 		time = get_time();
 		if ((time - table->philos[i].last_meal_time) >= table->time_to_die)
 		{
 			print_message("died", &table->philos[i]);
-			pthread_mutex_lock(&table->eating);
-			table->flag = 0;
-			pthread_mutex_unlock(&table->eating);
+			pthread_mutex_lock(&table->eating_mutex);
+			table->stop_flag = 0;
+			pthread_mutex_unlock(&table->eating_mutex);
 		}
-		pthread_mutex_unlock(&table->w8);
+		pthread_mutex_unlock(&table->wait_mutex);
 	}
 }
 
 void	check_dead(t_table *table)
 {
-	while (check_flag(table))
+	while (check_stop_flag(table))
 	{
 		check_eatean(table);
-		if (!check_flag(table))
+		if (!check_stop_flag(table))
 			break ;
 		check_time_to_die(table);
 	}

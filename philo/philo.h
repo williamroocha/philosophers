@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:22:13 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/14 19:02:44 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/14 19:14:38 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,25 +44,25 @@ typedef struct s_philo
 
 	size_t				last_meal_time;
 
-	pthread_t			thread;
+	pthread_t			philo_thread;
 	t_table				*table;
 }						t_philo;
 
 typedef struct s_table
 {
-	int					nbr_of_philos;
-	int					nbr_of_meals;
-	int					flag;
+	int					philo_nbr;
+	int					total_meals;
+	int					stop_flag;
 
 	size_t				time_to_die;
 	size_t				time_to_eat;
 	size_t				time_to_sleep;
 	size_t				start_time;
 
-	t_mutex				write;
-	t_mutex				w8;
-	t_mutex				eating;
-	t_mutex				*forks;
+	t_mutex				write_mutex;
+	t_mutex				wait_mutex;
+	t_mutex				eating_mutex;
+	t_mutex				*forks_mutex;
 
 	t_philo				*philos;
 }						t_table;
@@ -84,7 +84,7 @@ void					think(t_philo *philo);
 void					sleep_philo(t_philo *philo);
 void					eat(t_philo *philo);
 
-int						check_flag(t_table *table);
+int						check_stop_flag(t_table *table);
 void					check_dead(t_table *table);
 
 #endif
