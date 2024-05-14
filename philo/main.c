@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:20:24 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/14 18:40:53 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/14 18:55:27 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,21 @@ void	*philo(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	if (philo->geral->nbr_of_philos == 1)
+	if (philo->table->nbr_of_philos == 1)
 	{
 		print_message("has taken a fork", philo);
-		ft_usleep(philo->geral->time_to_die);
+		ft_usleep(philo->table->time_to_die);
 	}
-	while (check_flag(philo->geral))
+	while (check_flag(philo->table))
 	{
 		if (philo->id % 2)
 			usleep(100);
-		if (philo->geral->nbr_of_meals > 0
-			&& philo->meals_eaten >= philo->geral->nbr_of_meals)
+		if (philo->table->nbr_of_meals > 0
+			&& philo->meals_eaten >= philo->table->nbr_of_meals)
 			break ;
 		eat(philo);
-		pthread_mutex_unlock(&philo->geral->forks[philo->left_hand]);
-		pthread_mutex_unlock(&philo->geral->forks[philo->right_hand]);
+		pthread_mutex_unlock(&philo->table->forks[philo->left_hand]);
+		pthread_mutex_unlock(&philo->table->forks[philo->right_hand]);
 		sleep_philo(philo);
 		think(philo);
 	}
@@ -40,16 +40,16 @@ void	*philo(void *arg)
 
 int	main(int argc, char **argv)
 {
-	t_geral	geral;
+	t_table	table;
 
 	if (argc >= 5 && argc <= 6)
 	{
-		if (check_args(&geral, argv))
+		if (check_args(&table, argv))
 			return (-1);
-		if (init_all(&geral))
+		if (init_all(&table))
 			return (-1);
-		check_dead(&geral);
-		destroy_all(&geral);
+		check_dead(&table);
+		destroy_all(&table);
 	}
 	return (0);
 }

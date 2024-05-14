@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:25:51 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/14 18:42:24 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/14 18:54:37 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static int	is_number(char *nbr)
 	return (1);
 }
 
-int	check_args(t_geral *geral, char **argv)
+int	check_args(t_table *table, char **argv)
 {
 	int	i;
 
@@ -41,84 +41,84 @@ int	check_args(t_geral *geral, char **argv)
 			return (1);
 		}
 	}
-	geral->nbr_of_philos = ft_atoi(argv[1]);
-	geral->nbr_of_meals = 0;
+	table->nbr_of_philos = ft_atoi(argv[1]);
+	table->nbr_of_meals = 0;
 	if (argv[5])
-		geral->nbr_of_meals = ft_atoi(argv[5]);
-	geral->time_to_die = ft_atoi(argv[2]);
-	geral->time_to_eat = ft_atoi(argv[3]);
-	geral->time_to_sleep = ft_atoi(argv[4]);
-	geral->flag = 1;
-	pthread_mutex_init(&geral->w8, NULL);
-	pthread_mutex_init(&geral->write, NULL);
-	pthread_mutex_init(&geral->eating, NULL);
+		table->nbr_of_meals = ft_atoi(argv[5]);
+	table->time_to_die = ft_atoi(argv[2]);
+	table->time_to_eat = ft_atoi(argv[3]);
+	table->time_to_sleep = ft_atoi(argv[4]);
+	table->flag = 1;
+	pthread_mutex_init(&table->w8, NULL);
+	pthread_mutex_init(&table->write, NULL);
+	pthread_mutex_init(&table->eating, NULL);
 	return (0);
 }
 
-static int	init_geral(t_geral *geral)
+static int	init_table(t_table *table)
 {
 	long long	i;
 
-	geral->philos = (t_philo *)malloc(sizeof(t_philo) * geral->nbr_of_philos);
-	if (!geral->philos)
+	table->philos = (t_philo *)malloc(sizeof(t_philo) * table->nbr_of_philos);
+	if (!table->philos)
 		return (1);
-	geral->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
-			* geral->nbr_of_philos);
-	if (!geral->forks)
+	table->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
+			* table->nbr_of_philos);
+	if (!table->forks)
 	{
-		free(geral->philos);
+		free(table->philos);
 		return (1);
 	}
 	i = -1;
-	while (++i < geral->nbr_of_philos)
+	while (++i < table->nbr_of_philos)
 	{
-		if (pthread_mutex_init(&geral->forks[i], NULL))
+		if (pthread_mutex_init(&table->forks[i], NULL))
 		{
-			free(geral->philos);
-			free(geral->forks);
+			free(table->philos);
+			free(table->forks);
 			return (1);
 		}
 	}
 	return (0);
 }
 
-static int	init_philos(t_geral *geral)
+static int	init_philos(t_table *table)
 {
 	int	i;
 
-	geral->start_time = get_time();
+	table->start_time = get_time();
 	i = -1;
-	while (++i < geral->nbr_of_philos)
+	while (++i < table->nbr_of_philos)
 	{
-		geral->philos[i].id = i + 1;
-		geral->philos[i].geral = geral;
-		geral->philos[i].meals_eaten = 0;
-		geral->philos[i].last_meal = get_time();
+		table->philos[i].id = i + 1;
+		table->philos[i].table = table;
+		table->philos[i].meals_eaten = 0;
+		table->philos[i].last_meal = get_time();
 		if (i % 2 == 0)
 		{
-			geral->philos[i].left_hand = i;
-			geral->philos[i].right_hand = (i + 1) % geral->nbr_of_philos;
+			table->philos[i].left_hand = i;
+			table->philos[i].right_hand = (i + 1) % table->nbr_of_philos;
 		}
 		else
 		{
-			geral->philos[i].left_hand = (i + 1) % geral->nbr_of_philos;
-			geral->philos[i].right_hand = i;
+			table->philos[i].left_hand = (i + 1) % table->nbr_of_philos;
+			table->philos[i].right_hand = i;
 		}
-		if (pthread_create(&geral->philos[i].thread, NULL, &philo,
-				&geral->philos[i]))
+		if (pthread_create(&table->philos[i].thread, NULL, &philo,
+				&table->philos[i]))
 			return (1);
 	}
 	return (0);
 }
 
-int	init_all(t_geral *geral)
+int	init_all(t_table *table)
 {
 	int	i;
 
 	i = 0;
-	if (init_geral(geral))
+	if (init_table(table))
 		i = 1;
-	if (init_philos(geral))
+	if (init_philos(table))
 		i = 1;
 	return (i);
 }

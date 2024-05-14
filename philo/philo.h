@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:22:13 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/14 18:41:59 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/14 18:49:36 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@
 # define W "\033[1;37m"   /* Bold White */
 /*********************************************************/
 
-typedef struct s_geral	t_geral;
+typedef struct s_table	t_table;
+typedef pthread_mutex_t	t_mutex;
 
 typedef struct s_philo
 {
@@ -44,10 +45,10 @@ typedef struct s_philo
 	size_t				last_meal;
 
 	pthread_t			thread;
-	t_geral				*geral;
+	t_table				*table;
 }						t_philo;
 
-typedef struct s_geral
+typedef struct s_table
 {
 	int					nbr_of_philos;
 	int					nbr_of_meals;
@@ -58,22 +59,22 @@ typedef struct s_geral
 	size_t				time_to_sleep;
 	size_t				start_time;
 
-	pthread_mutex_t		write;
-	pthread_mutex_t		w8;
-	pthread_mutex_t		eating;
-	pthread_mutex_t		*forks;
+	t_mutex				write;
+	t_mutex				w8;
+	t_mutex				eating;
+	t_mutex				*forks;
 
 	t_philo				*philos;
-}						t_geral;
+}						t_table;
 
 void					*philo(void *arg);
 
-int						check_args(t_geral *geral, char **argv);
-int						init_all(t_geral *geral);
+int						check_args(t_table *table, char **argv);
+int						init_all(t_table *table);
 
 long					ft_atoi(char *str);
 size_t					get_time(void);
-void					destroy_all(t_geral *geral);
+void					destroy_all(t_table *table);
 void					print_message(char *str, t_philo *philo);
 void					ft_usleep(size_t time);
 
@@ -83,7 +84,7 @@ void					think(t_philo *philo);
 void					sleep_philo(t_philo *philo);
 void					eat(t_philo *philo);
 
-int						check_flag(t_geral *geral);
-void					check_dead(t_geral *geral);
+int						check_flag(t_table *table);
+void					check_dead(t_table *table);
 
 #endif

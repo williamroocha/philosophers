@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:24:20 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/14 18:40:00 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/14 18:55:27 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,21 +44,21 @@ size_t	get_time(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-void	destroy_all(t_geral *geral)
+void	destroy_all(t_table *table)
 {
 	int	i;
 
 	i = -1;
-	while (++i < geral->nbr_of_philos)
-		pthread_join(geral->philos[i].thread, 0);
+	while (++i < table->nbr_of_philos)
+		pthread_join(table->philos[i].thread, 0);
 	i = -1;
-	while (++i < geral->nbr_of_philos)
-		pthread_mutex_destroy(&geral->forks[i]);
-	pthread_mutex_destroy(&geral->w8);
-	pthread_mutex_destroy(&geral->write);
-	pthread_mutex_destroy(&geral->eating);
-	free(geral->forks);
-	free(geral->philos);
+	while (++i < table->nbr_of_philos)
+		pthread_mutex_destroy(&table->forks[i]);
+	pthread_mutex_destroy(&table->w8);
+	pthread_mutex_destroy(&table->write);
+	pthread_mutex_destroy(&table->eating);
+	free(table->forks);
+	free(table->philos);
 }
 
 void	ft_usleep(size_t time)
@@ -76,70 +76,70 @@ void	print_message(char *str, t_philo *philo)
 {
 	size_t	time;
 
-	if (!check_flag(philo->geral))
+	if (!check_flag(philo->table))
 		return ;
-	pthread_mutex_lock(&philo->geral->write);
+	pthread_mutex_lock(&philo->table->write);
 	time = get_time();
-	printf("%zu %d %s\n", time - philo->geral->start_time, philo->id, str);
-	pthread_mutex_unlock(&philo->geral->write);
+	printf("%zu %d %s\n", time - philo->table->start_time, philo->id, str);
+	pthread_mutex_unlock(&philo->table->write);
 }
 
-int	check_flag(t_geral *geral)
+int	check_flag(t_table *table)
 {
 	int	i;
 
 	i = 1;
-	pthread_mutex_lock(&geral->eating);
-	if (geral->flag == 0)
+	pthread_mutex_lock(&table->eating);
+	if (table->flag == 0)
 		i = 0;
-	pthread_mutex_unlock(&geral->eating);
+	pthread_mutex_unlock(&table->eating);
 	return (i);
 }
 
-static void	check_eatean(t_geral *geral)
+static void	check_eatean(t_table *table)
 {
 	int	i;
 
 	i = 0;
-	pthread_mutex_lock(&geral->w8);
-	while (geral->nbr_of_meals && i < geral->nbr_of_philos
-		&& geral->philos[i].meals_eaten >= geral->nbr_of_meals)
+	pthread_mutex_lock(&table->w8);
+	while (table->nbr_of_meals && i < table->nbr_of_philos
+		&& table->philos[i].meals_eaten >= table->nbr_of_meals)
 		i++;
-	pthread_mutex_lock(&geral->eating);
-	if (i >= geral->nbr_of_philos)
-		geral->flag = 0;
-	pthread_mutex_unlock(&geral->eating);
-	pthread_mutex_unlock(&geral->w8);
+	pthread_mutex_lock(&table->eating);
+	if (i >= table->nbr_of_philos)
+		table->flag = 0;
+	pthread_mutex_unlock(&table->eating);
+	pthread_mutex_unlock(&table->w8);
 }
 
-static void	check_time_to_die(t_geral *geral)
+static void	check_time_to_die(t_table *table)
 {
 	int		i;
 	size_t	time;
 
 	i = -1;
-	while (++i < geral->nbr_of_philos && check_flag(geral))
+	while (++i < table->nbr_of_philos && check_flag(table))
 	{
-		pthread_mutex_lock(&geral->w8);
+		pthread_mutex_lock(&table->w8);
 		time = get_time();
-		if ((time - geral->philos[i].last_meal) >= geral->time_to_die)
+		if ((time - table->philos[i].last_meal) >= table->time_to_die)
 		{
-			print_message("died", &geral->philos[i]);
-			pthread_mutex_lock(&geral->eating);
-			geral->flag = 0;
-			pthread_mutex_unlock(&geral->eating);
+			print_message("died", &table->philos[i]);
+			pthread_mutex_lock(&table->eating);
+			table->flag = 0;
+			pthread_mutex_unlock(&table->eating);
 		}
-		pthread_mutex_unlock(&geral->w8);
+		pthread_mutex_unlock(&table->w8);
 	}
 }
 
-void	check_dead(t_geral *geral)
+void	check_dead(t_table *table)
 {
-	while (check_flag(geral))
+	while (check_flag(table))
 	{
-		check_eatean(geral);
-		if (!check_flag(geral))
+		check_eatean(table);
+		if (!check_flag(table))
 			break ;
-		check_time_to_die(geral);
+		check_time_to_die(table);
 	}
 }
