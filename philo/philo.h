@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:22:13 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/14 18:49:36 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/14 19:02:44 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,13 @@ typedef pthread_mutex_t	t_mutex;
 
 typedef struct s_philo
 {
-	int					left_hand;
-	int					right_hand;
-
 	int					id;
-	int					meals_eaten;
+	int					meals_consumed;
 
-	size_t				last_meal;
+	int					left_fork;
+	int					right_fork;
+
+	size_t				last_meal_time;
 
 	pthread_t			thread;
 	t_table				*table;

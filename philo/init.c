@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:25:51 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/14 18:54:37 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/14 19:02:44 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,17 +92,17 @@ static int	init_philos(t_table *table)
 	{
 		table->philos[i].id = i + 1;
 		table->philos[i].table = table;
-		table->philos[i].meals_eaten = 0;
-		table->philos[i].last_meal = get_time();
+		table->philos[i].meals_consumed = 0;
+		table->philos[i].last_meal_time = get_time();
 		if (i % 2 == 0)
 		{
-			table->philos[i].left_hand = i;
-			table->philos[i].right_hand = (i + 1) % table->nbr_of_philos;
+			table->philos[i].left_fork = i;
+			table->philos[i].right_fork = (i + 1) % table->nbr_of_philos;
 		}
 		else
 		{
-			table->philos[i].left_hand = (i + 1) % table->nbr_of_philos;
-			table->philos[i].right_hand = i;
+			table->philos[i].left_fork = (i + 1) % table->nbr_of_philos;
+			table->philos[i].right_fork = i;
 		}
 		if (pthread_create(&table->philos[i].thread, NULL, &philo,
 				&table->philos[i]))

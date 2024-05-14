@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:24:20 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/14 18:55:27 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/14 19:02:44 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ static void	check_eatean(t_table *table)
 	i = 0;
 	pthread_mutex_lock(&table->w8);
 	while (table->nbr_of_meals && i < table->nbr_of_philos
-		&& table->philos[i].meals_eaten >= table->nbr_of_meals)
+		&& table->philos[i].meals_consumed >= table->nbr_of_meals)
 		i++;
 	pthread_mutex_lock(&table->eating);
 	if (i >= table->nbr_of_philos)
@@ -122,7 +122,7 @@ static void	check_time_to_die(t_table *table)
 	{
 		pthread_mutex_lock(&table->w8);
 		time = get_time();
-		if ((time - table->philos[i].last_meal) >= table->time_to_die)
+		if ((time - table->philos[i].last_meal_time) >= table->time_to_die)
 		{
 			print_message("died", &table->philos[i]);
 			pthread_mutex_lock(&table->eating);
