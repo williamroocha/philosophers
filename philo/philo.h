@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:22:13 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/14 19:14:38 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/15 14:06:23 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,15 @@ typedef struct s_table
 	t_philo				*philos;
 }						t_table;
 
-void					*philo(void *arg);
+void					*dinner_routine(void *arg);
+int						verify_guest_list(t_table *table, char **av);
 
-int						check_args(t_table *table, char **argv);
-int						init_all(t_table *table);
+int						check_args(t_table *table, char **av);
+int						organize_all(t_table *table);
 
 long					ft_atoi(char *str);
 size_t					get_time(void);
-void					destroy_all(t_table *table);
+void					cleanup_the_mess(t_table *table);
 void					print_message(char *str, t_philo *philo);
 void					ft_usleep(size_t time);
 
@@ -85,6 +86,7 @@ void					sleep_philo(t_philo *philo);
 void					eat(t_philo *philo);
 
 int						check_stop_flag(t_table *table);
-void					check_dead(t_table *table);
+void					check_health(t_table *table);
+void					error_exit(const char *error);
 
 #endif

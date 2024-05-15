@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:27:05 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/14 19:14:38 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/15 14:16:48 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	eat(t_philo *philo)
 	lock_right_fork(philo);
 	lock_left_fork(philo);
 	pthread_mutex_lock(&philo->table->wait_mutex);
-	print_message("is eating_mutex", philo);
+	print_message("is eating", philo);
 	philo->last_meal_time = get_time();
 	pthread_mutex_unlock(&philo->table->wait_mutex);
 	ft_usleep(philo->table->time_to_eat);
