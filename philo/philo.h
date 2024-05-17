@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/14 15:22:13 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/15 14:06:23 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/17 18:34:00 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,13 @@
 # define PHILO_H
 
 # include <pthread.h>
+# include <semaphore.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
+# include <fcntl.h>
 
 /*********************************************************/
 # define RST "\033[0m"    /* Reset to default color */
@@ -88,5 +90,6 @@ void					eat(t_philo *philo);
 int						check_stop_flag(t_table *table);
 void					check_health(t_table *table);
 void					error_exit(const char *error);
+void	precise_usleep(long usec, t_table *table);
 
 #endif

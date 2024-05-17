@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/15 13:22:41 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/15 14:06:23 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/17 18:42:06 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,9 @@ void	*dinner_routine(void *arg)
 	while (check_stop_flag(philo->table))
 	{
 		if (philo->id % 2)
-			usleep(100);
+			ft_usleep(100);
+		else
+			precise_usleep(philo->table->time_to_die, philo->table);
 		if (philo->table->total_meals > 0
 			&& philo->meals_consumed >= philo->table->total_meals)
 			break ;
