@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:14:47 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/19 17:24:42 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/19 17:28:29 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	thinking(t_philo *philo, bool pre_simulation)
 	long	t_think;
 
 	if (!pre_simulation)
-		write_log(THINKING, philo); // change to DEBUG_MODE
+		write_log(THINKING, philo);
 	if (philo->table->philo_nbr % 2 == 0)
 		return ;
 	t_eat = philo->table->time_to_eat;
