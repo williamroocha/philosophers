@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 17:48:31 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/19 17:14:52 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/19 19:06:33 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@ static void	assign_forks(t_philo *philo, t_fork *forks, int philo_position)
 	int	philo_nbr;
 
 	philo_nbr = philo->table->philo_nbr;
-	philo->first_fork = &forks[(philo_position + 1) % philo_nbr];
-	philo->second_fork = &forks[philo_position];
+	philo->left_fork = &forks[(philo_position + 1) % philo_nbr];
+	philo->right_fork = &forks[philo_position];
 	if (philo->id % 2 == 0)
 	{
-		philo->first_fork = &forks[philo_position];
-		philo->second_fork = &forks[(philo_position + 1) % philo_nbr];
+		philo->left_fork = &forks[philo_position];
+		philo->right_fork = &forks[(philo_position + 1) % philo_nbr];
 	}
 }
 
@@ -61,10 +61,10 @@ static void	data_init(t_table *table)
 		ft_mutex_handler(&table->forks[i].fork, INIT);
 		table->forks[i].fork_id = i;
 	}
-	philo_init(table);
 }
 
 void	init(t_table *table)
 {
 	data_init(table);
+	philo_init(table);
 }

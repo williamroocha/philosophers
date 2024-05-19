@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 16:17:55 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/19 17:20:20 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/19 19:53:28 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,8 @@ typedef enum e_status
 	EATING,
 	SLEEPING,
 	THINKING,
-	TAKE_FIRST_FORK,
-	TAKE_SECOND_FORK,
+	TAKE_LEFT_FORK,
+	TAKE_RIGHT_FORK,
 	DIED,
 }						t_philo_status;
 
@@ -87,8 +87,8 @@ typedef struct s_philo
 	bool				full;
 	long				meals_counter;
 	long				last_meal_time;
-	t_fork				*first_fork;
-	t_fork				*second_fork;
+	t_fork				*left_fork;
+	t_fork				*right_fork;
 	t_mtx				philo_mutex;
 	t_table				*table;
 }						t_philo;
@@ -135,13 +135,13 @@ void					ft_mutex_handler(t_mtx *mutex, t_opcode opcode);
 void					write_log(t_philo_status status, t_philo *philo);
 
 // Monitor
-void					*monitor_dinner(void *data);
+void					*health_monitor(void *data);
 
 // Utils
 void					error_exit(const char *error);
 long					ft_atol(const char *str);
 void					*ft_malloc(size_t bytes);
-bool					simulation_finished(t_table *table);
+bool					dinner_finished(t_table *table);
 void					set_long(t_mtx *mutex, long *dest, long value);
 long					get_long(t_mtx *mutex, long *value);
 bool					get_bool(t_mtx *mutex, bool *value);

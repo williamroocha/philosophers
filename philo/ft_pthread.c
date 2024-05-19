@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 16:12:44 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/19 18:41:55 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/19 19:40:30 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,12 @@ static void	handle_mutex_error(int status, t_opcode opcode)
 		error_exit("The value specified by attr is invalid.");
 	else if (status == EDEADLK)
 		error_exit("A deadlock would occur if the thread "
-					"blocked waiting for mutex.");
+			"blocked waiting for mutex.");
 	else if (status == EPERM)
 		error_exit("The current thread does not hold a lock on mutex.");
 	else if (status == ENOMEM)
 		error_exit("The process cannot allocate enough memory"
-					" to create another mutex.");
+			" to create another mutex.");
 	else if (status == EBUSY)
 		error_exit("Mutex is locked");
 }
@@ -46,10 +46,10 @@ static void	handle_thread_error(int status, t_opcode opcode)
 		error_exit("The value specified by thread is not joinable\n");
 	else if (status == ESRCH)
 		error_exit("No thread could be found corresponding to that"
-					"specified by the given thread ID, thread.");
+			"specified by the given thread ID, thread.");
 	else if (status == EDEADLK)
 		error_exit("A deadlock was detected or the value of"
-					"thread specifies the calling thread.");
+			"thread specifies the calling thread.");
 }
 
 void	ft_mutex_handler(t_mtx *mutex, t_opcode opcode)

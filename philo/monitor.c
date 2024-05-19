@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 16:35:07 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/19 17:20:32 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/19 19:53:28 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,19 +27,19 @@ static bool	philo_died(t_philo *philo)
 	return (false);
 }
 
-void	*monitor_dinner(void *data)
+void	*health_monitor(void *data)
 {
-	int			i;
-	t_table		*table;
+	int		i;
+	t_table	*table;
 
 	table = (t_table *)data;
 	while (!all_threads_running(&table->table_mutex,
 			&table->threads_running_nbr, table->philo_nbr))
 		;
-	while (!simulation_finished(table))
-	{	
+	while (!dinner_finished(table))
+	{
 		i = -1;
-		while (++i < table->philo_nbr && !simulation_finished(table))
+		while (++i < table->philo_nbr && !dinner_finished(table))
 		{
 			if (philo_died(table->philos + i))
 			{
