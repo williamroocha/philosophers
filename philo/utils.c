@@ -5,80 +5,52 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/14 15:24:20 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/17 18:41:42 by wiferrei         ###   ########.fr       */
+/*   Created: 2024/05/18 16:53:52 by wiferrei          #+#    #+#             */
+/*   Updated: 2024/05/19 17:14:52 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-long	ft_atoi(char *str)
-{
-	long	i;
-	long	res;
-	int		sign;
-
-	res = 0;
-	i = 0;
-	sign = 1;
-	while (str[i] == ' ' || (str[i] >= '\t' && str[i] <= '\r'))
-		i++;
-	if (str[i] == '-')
-		sign = -1;
-	if (str[i] == '-' || str[i] == '+')
-		i++;
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		res = res * 10 + str[i] - '0';
-		i++;
-	}
-	return (sign * res);
-}
-
-size_t	get_time(void)
-{
-	struct timeval	time;
-
-	if (gettimeofday(&time, NULL))
-		return (0);
-	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
-}
-
-void	ft_usleep(size_t time)
-{
-	size_t	st;
-
-	st = get_time();
-	while ((get_time() - st) < time)
-	{
-		usleep(time / 10);
-	}
-}
-
-void	print_message(char *str, t_philo *philo)
-{
-	size_t	time;
-
-	if (!check_stop_flag(philo->table))
-		return ;
-	pthread_mutex_lock(&philo->table->write_mutex);
-	time = get_time();
-	printf("%-6zu %-3d %s\n", time - philo->table->start_time, philo->id, str);
-	pthread_mutex_unlock(&philo->table->write_mutex);
-}
-
 void	error_exit(const char *error)
 {
-	printf(RED "%s\n" RST, error);
+	printf(RED "%s\n" DEFAULT, error);
 	exit(EXIT_FAILURE);
 }
 
-typedef enum e_time_code
+void	set_bool(t_mtx *mutex, bool *dest, bool value)
 {
-	SECONDS,
-	MILLISECOND,
-	MICROSECOND,
-}		t_time_code;
+	ft_mutex_handler(mutex, LOCK);
+	*dest = value;
+	ft_mutex_handler(mutex, UNLOCK);
+}
+
+bool	get_bool(t_mtx *mutex, bool *value)
+{
+	bool	ret;
+
+	ft_mutex_handler(mutex, LOCK);
+	ret = *value;
+	ft_mutex_handler(mutex, UNLOCK);
+	return (ret);
+}
+
+long	get_long(t_mtx *mutex, long *value)
+{
+	long	ret;
+
+	ft_mutex_handler(mutex, LOCK);
+	ret = *value;
+	ft_mutex_handler(mutex, UNLOCK);
+	return (ret);
+}
+
+void	set_long(t_mtx *mutex, long *dest, long value)
+{
+	ft_mutex_handler(mutex, LOCK);
+	*dest = value;
+	ft_mutex_handler(mutex, UNLOCK);
+}
 
 long	gettime(int time_code)
 {
@@ -94,16 +66,10 @@ long	gettime(int time_code)
 		return (tv.tv_sec + tv.tv_usec / 1e6);
 	else
 		error_exit("Wrong input to gettime:"
-			"use <MILLISECOND> <MICROSECOND> <SECONDS>");
+					"use <MILLISECOND> <MICROSECOND> <SECONDS>");
 	return (1337);
 }
 
-/*
- * HYBRID approach
- * given usleep is not precise
- * i usleep for majority of time ,
- * then refine wiht busy wait
-*/
 void	precise_usleep(long usec, t_table *table)
 {
 	long	start;
@@ -113,8 +79,8 @@ void	precise_usleep(long usec, t_table *table)
 	start = gettime(MICROSECOND);
 	while (gettime(MICROSECOND) - start < usec)
 	{
-		if (!check_stop_flag(table))
-			return ;
+		if (simulation_finished(table))
+			break ;
 		elapsed = gettime(MICROSECOND) - start;
 		rem = usec - elapsed;
 		if (rem > 1e4)
@@ -123,4 +89,60 @@ void	precise_usleep(long usec, t_table *table)
 			while (gettime(MICROSECOND) - start < usec)
 				;
 	}
+}
+
+// sync
+
+void	wait_all_philos(t_table *table)
+{
+	bool	all_philos_ready;
+
+	while (true)
+	{
+		all_philos_ready = get_bool(&table->table_mutex,
+				&table->all_philos_ready);
+		if (all_philos_ready)
+			break ;
+	}
+}
+
+void	increase_long(t_mtx *mutex, long *value)
+{
+	pthread_mutex_lock(mutex);
+	++(*value);
+	pthread_mutex_unlock(mutex);
+}
+
+bool	all_threads_running(t_mtx *mutex, long *threads, long philo_nbr)
+{
+	bool	ret;
+
+	ret = false;
+	ft_mutex_handler(mutex, LOCK);
+	if (*threads == philo_nbr)
+		ret = true;
+	ft_mutex_handler(mutex, UNLOCK);
+	return (ret);
+}
+
+bool	simulation_finished(t_table *table)
+{
+	return (get_bool(&table->table_mutex, &table->end_dinner));
+}
+
+void	clean(t_table *table)
+{
+	t_philo	*philo;
+	int		i;
+
+	i = -1;
+	while (++i < table->philo_nbr)
+	{
+		philo = table->philos + i;
+		ft_mutex_handler(&philo->philo_mutex, DESTROY);
+	}
+	ft_mutex_handler(&table->write_mutex, DESTROY);
+	ft_mutex_handler(&table->table_mutex, DESTROY);
+	free(table->forks);
+	free(table->philos);
 }

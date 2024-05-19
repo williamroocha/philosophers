@@ -1,8 +1,8 @@
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -pthread
+CFLAGS = -Wall -Wextra -Werror -pthread -g -fsanitize=address
 
-SRCS = organize.c main.c philo_routine.c utils.c dining_manager.c cleanup.c health_checker.c
+SRCS = main.c init.c utils.c parsing.c dinner.c write.c monitor.c ft_atol.c ft_malloc.c ft_pthread.c 
 
 OBJS = $(addprefix obj/, $(SRCS:.c=.o))
 
