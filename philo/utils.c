@@ -52,7 +52,6 @@ void	set_long(t_mtx *mutex, long *dest, long value)
 	ft_mutex_handler(mutex, UNLOCK);
 }
 
-// sync
 
 void	increase_long(t_mtx *mutex, long *value)
 {
@@ -66,19 +65,4 @@ bool	dinner_finished(t_table *table)
 	return (get_bool(&table->table_mutex, &table->end_dinner));
 }
 
-void	clean(t_table *table)
-{
-	t_philo	*philo;
-	int		i;
 
-	i = -1;
-	while (++i < table->philo_nbr)
-	{
-		philo = table->philos + i;
-		ft_mutex_handler(&philo->philo_mutex, DESTROY);
-	}
-	ft_mutex_handler(&table->write_mutex, DESTROY);
-	ft_mutex_handler(&table->table_mutex, DESTROY);
-	free(table->forks);
-	free(table->philos);
-}
