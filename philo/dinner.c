@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:14:47 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/19 20:27:30 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/20 15:30:41 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static void	eat(t_philo *philo)
 	ft_mutex_handler(&philo->right_fork->fork, UNLOCK);
 }
 
-static void	*dinner_simulation(void *data)
+static void	*dinner_routine(void *data)
 {
 	t_philo	*philo;
 
@@ -95,7 +95,7 @@ void	dinner(t_table *table)
 			&table->philos[0], CREATE);
 	else
 		while (++i < table->philo_nbr)
-			ft_thread_handler(&table->philos[i].thread_id, dinner_simulation,
+			ft_thread_handler(&table->philos[i].thread_id, dinner_routine,
 				&table->philos[i], CREATE);
 	ft_thread_handler(&table->monitor, health_monitor, table, CREATE);
 	table->start_dinner = gettime(MILLISECOND);

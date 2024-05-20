@@ -6,11 +6,16 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 16:35:07 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/19 19:53:28 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/20 15:36:30 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+bool	dinner_finished(t_table *table)
+{
+	return (get_bool(&table->table_mutex, &table->end_dinner));
+}
 
 static bool	philo_died(t_philo *philo)
 {
