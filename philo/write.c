@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 16:07:01 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/20 15:34:57 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/20 15:49:18 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	error_exit(const char *error)
 {
-	printf(RED "%s\n" DEFAULT, error);
+	printf("%s\n", error);
 	exit(EXIT_FAILURE);
 }
 
@@ -26,18 +26,18 @@ void	write_log(t_philo_status status, t_philo *philo)
 	if (get_bool(&philo->philo_mutex, &philo->full))
 		return ;
 	ft_mutex_handler(&philo->table->write_mutex, LOCK);
-	if ((TAKE_LEFT_FORK == status || TAKE_RIGHT_FORK == status)
+	if ((status == TAKE_LEFT_FORK || status == TAKE_RIGHT_FORK)
 		&& !dinner_finished(philo->table))
-		printf(WHITE "%-6ld" DEFAULT " %d has taken a fork\n", elapsed,
+		printf("%-6ld" " %d has taken a fork\n", elapsed,
 			philo->id);
-	else if (EATING == status && !dinner_finished(philo->table))
-		printf(WHITE "%-6ld" CYAN " %d is eating\n" DEFAULT, elapsed,
+	else if (status == EATING && !dinner_finished(philo->table))
+		printf("%-6ld" " %d is eating\n", elapsed,
 			philo->id);
-	else if (SLEEPING == status && !dinner_finished(philo->table))
-		printf(WHITE "%-6ld" DEFAULT " %d is sleeping\n", elapsed, philo->id);
-	else if (THINKING == status && !dinner_finished(philo->table))
-		printf(WHITE "%-6ld" DEFAULT " %d is thinking\n", elapsed, philo->id);
-	else if (DIED == status)
-		printf(RED "%-6ld %d died\n" DEFAULT, elapsed, philo->id);
+	else if (status == SLEEPING && !dinner_finished(philo->table))
+		printf("%-6ld" " %d is sleeping\n", elapsed, philo->id);
+	else if (status == THINKING && !dinner_finished(philo->table))
+		printf("%-6ld" " %d is thinking\n", elapsed, philo->id);
+	else if (status == DIED)
+		printf("%-6ld %d died\n", elapsed, philo->id);
 	ft_mutex_handler(&philo->table->write_mutex, UNLOCK);
 }

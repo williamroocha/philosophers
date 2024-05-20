@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 16:55:05 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/19 18:49:38 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/20 15:51:56 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ static void	check_limits(t_table *table)
 {
 	if (table->philo_nbr > PHILO_MAX)
 	{
-		printf(RED "The number of philosophers is too big, "
-			"the limit is %d.\n" DEFAULT,
+		printf("The number of philosophers is too big, "
+			"the limit is %d.\n",
 			PHILO_MAX);
 		exit(EXIT_FAILURE);
 	}
