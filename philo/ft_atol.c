@@ -33,12 +33,17 @@ static const char	*valid_input(const char *str)
 	if (*str == '+')
 		++str;
 	else if (*str == '-')
-		error_exit("Feed me only positive values");
+		error_exit("Only positive numbers are allowed");
 	if (!is_digit(*str))
-		error_exit("The input is not a correct digit");
+		error_exit("Only int are allowed");
 	number = str;
-	while (is_digit(*str++))
+	while (is_digit(*str))
+	{
+		++str;
 		++len;
+	}
+	if (*str != '\0' && !is_space(*str))
+		error_exit("Invalid characters in input");
 	if (len > 10)
 		error_exit("The value is too big, INT_MAX is the limit");
 	return (number);

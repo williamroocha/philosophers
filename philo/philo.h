@@ -25,22 +25,8 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-/* ************************************************************************** */
-# define DEFAULT "\033[0m"
-# define RED "\033[1;31m"
-# define GREEN "\033[1;32m"
-# define YELLOW "\033[1;33m"
-# define BLUE "\033[1;34m"
-# define CYAN "\033[1;36m"
-# define WHITE "\033[1;37m"
-/* ************************************************************************** */
-
 # ifndef PHILO_MAX
 #  define PHILO_MAX 200
-# endif
-
-# ifndef DEBUG_MODE
-#  define DEBUG_MODE 0
 # endif
 
 typedef enum e_time_code
@@ -125,6 +111,9 @@ bool					all_threads_running(t_mtx *mutex, long *threads,
 // Dinner
 void					dinner(t_table *table);
 
+// Philo routine
+void					philo_routine(t_philo *philo);
+
 // Ptrhead
 
 void					ft_thread_handler(pthread_t *thread,
@@ -147,7 +136,7 @@ long					get_long(t_mtx *mutex, long *value);
 bool					get_bool(t_mtx *mutex, bool *value);
 void					set_bool(t_mtx *mutex, bool *dest, bool value);
 long					gettime(int time_code);
-void					precise_usleep(long usec, t_table *table);
+void					ft_usleep(long usec, t_table *table);
 void					clean(t_table *table);
 
 #endif
