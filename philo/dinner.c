@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 18:14:47 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/20 15:30:41 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/21 15:55:39 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ static void	*dinner_routine(void *data)
 	set_long(&philo->philo_mutex, &philo->last_meal_time, gettime(MILLISECOND));
 	increase_long(&philo->table->table_mutex,
 		&philo->table->threads_running_nbr);
+	de_synchronize_philos(philo);
 	while (!dinner_finished(philo->table))
 	{
 		if (get_bool(&philo->philo_mutex, &philo->full))

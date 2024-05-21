@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/18 16:17:55 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/19 19:53:28 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/21 15:54:46 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,5 +138,7 @@ void					set_bool(t_mtx *mutex, bool *dest, bool value);
 long					gettime(int time_code);
 void					ft_usleep(long usec, t_table *table);
 void					clean(t_table *table);
+
+void					de_synchronize_philos(t_philo *philo);
 
 #endif
