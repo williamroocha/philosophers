@@ -1,6 +1,6 @@
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -pthread -g -fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -pthread -g #-fsanitize=address
 
 SRCS = main.c init.c utils.c sync.c parsing.c dinner.c write.c monitor.c ft_atol.c ft_malloc.c ft_usleep.c ft_pthread.c clean.c philo_routine.c
 

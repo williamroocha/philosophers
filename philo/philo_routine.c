@@ -6,36 +6,17 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 12:55:17 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/21 15:57:37 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/24 16:40:15 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// static void	philo_think(t_philo *philo)
-// {
-// 	write_log(THINKING, philo);
-// }
-
-
-
-void	thinking(t_philo *philo, bool pre_simulation)
+void	philo_think(t_philo *philo)
 {
-	long	t_eat;
-	long	t_sleep;
-	long	t_think;
-
-	if (!pre_simulation)
-		write_log(THINKING, philo);
-	if (philo->table->philo_nbr % 2 == 0)
-		return ;
-	t_eat = philo->table->time_to_eat;
-	t_sleep = philo->table->time_to_sleep;
-	t_think = (t_eat * 2) - t_sleep;
-	if (t_think < 0)
-		t_think = 0;
-	ft_usleep(t_think * 0.42, philo->table);
+	write_log(THINKING, philo);
 }
+
 void	de_synchronize_philos(t_philo *philo)
 {
 	if (philo->table->philo_nbr % 2 == 0)
@@ -46,9 +27,9 @@ void	de_synchronize_philos(t_philo *philo)
 	else
 	{
 		if (philo->id % 2)
-			thinking(philo, true);
+			philo_think(philo);
 	}
-}	
+}
 
 static void	philo_sleep(t_philo *philo)
 {
@@ -77,6 +58,5 @@ void	philo_routine(t_philo *philo)
 {
 	philo_eat(philo);
 	philo_sleep(philo);
-	//philo_think(philo);
-	thinking(philo, false);
+	philo_think(philo);
 }

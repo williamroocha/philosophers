@@ -6,7 +6,7 @@
 /*   By: wiferrei <wiferrei@student.42lisboa.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 19:58:24 by wiferrei          #+#    #+#             */
-/*   Updated: 2024/05/21 15:53:50 by wiferrei         ###   ########.fr       */
+/*   Updated: 2024/05/24 16:49:24 by wiferrei         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,4 +36,3 @@ bool	all_threads_running(t_mtx *mutex, long *threads, long philo_nbr)
 	ft_mutex_handler(mutex, UNLOCK);
 	return (ret);
 }
-
